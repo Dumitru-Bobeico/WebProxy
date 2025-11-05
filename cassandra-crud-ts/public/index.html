@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users CRUD</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 600px;
+        margin: 2rem auto;
+      }
+      input,
+      button {
+        margin: 0.2rem 0;
+        padding: 0.5rem;
+      }
+      li {
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Users CRUD</h1>
+    <h2>Create User</h2>
+    <input id="name" placeholder="Name" />
+    <input id="email" placeholder="Email" />
+    <button onClick="createUser()">Create</button>
+
+    <h2>Users List</h2>
+    <ul id="usersList"></ul>
+
+    <script>
+      const API = "/api/users";
+
+      // Fetch users on page load
+      async function fetchUsers() {
+        const res = await fetch(API);
+        const users = await res.json();
+        const ul = document.getElementById("usersList");
+        ul.innerHTML = "";
+        users.forEach((u) => {
+          const li = document.createElement("li");
+          li.textContent = `${u.name} (${u.email}) `;
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.onclick = () => editUser(u);
+          li.appendChild(editBtn);
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.onclick = () => deleteUser(u.id);
+          li.appendChild(delBtn);
+
+          ul.appendChild(li);
+        });
+      }
+
+      // Create user
+      async function createUser() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        if (!name || !email) {
+          alert("Please enter name and email");
+          return;
+        }
+        await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email }),
+        });
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        fetchUsers(); // reload the list
+      }
+
+      // Edit user
+      async function editUser(user) {
+        const name = prompt("Enter new name", user.name);
+        const email = prompt("Enter new email", user.email);
+        if (!name || !email) return;
+        await fetch(`${API}/${user.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email }),
+        });
+        fetchUsers();
+      }
+
+      // Delete user
+      async function deleteUser(id) {
+        await fetch(`${API}/${id}`, { method: "DELETE" });
+        fetchUsers();
+      }
+
+      // Load users on page load
+      fetchUsers();
+    </script>
+  </body>
+</html>

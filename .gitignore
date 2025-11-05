@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment variables
+.env
+
+# Docker
+*.pid
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Optional: Cassandra data volume if local (not inside container)
+cassandra-data/
+
+# VSCode settings (if you want to ignore workspace settings)
+.vscode/
+

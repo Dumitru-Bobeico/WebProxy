@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'DESCRIBE keyspaces'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  webproxycrud-instance1:
+    build: .
+    container_name: webproxycrud-instance1
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - INSTANCE_ID=instance1
+    ports:
+      - "3001:3000"
+
+  webproxycrud-instance2:
+    build: .
+    container_name: webproxycrud-instance2
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - INSTANCE_ID=instance2
+    ports:
+      - "3002:3000"
+
+  webproxycrud-instance3:
+    build: .
+    container_name: webproxycrud-instance3
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - INSTANCE_ID=instance3
+    ports:
+      - "3003:3000"
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - webproxycrud-instance1
+      - webproxycrud-instance2
+      - webproxycrud-instance3
+
+volumes:
+  cassandra-data:
+
