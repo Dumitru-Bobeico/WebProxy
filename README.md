@@ -35,5 +35,7 @@ Accessing the app:
 http://localhost -> load balanced access
 
 http://localhost:3001 -> instance1
+
 http://localhost:3002 -> instance2
+
 http://localhost:3003 -> instance3
