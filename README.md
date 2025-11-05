@@ -10,6 +10,11 @@ docker compose up -d --build
 docker compose logs -f
 ```
 
+- Check webproxycrud-instance logs
+```bash
+docker logs -f webproxycrud-instance{nr}
+```
+
 - Stop containers
 ```bash
 docker compose stop
